@@ -62,7 +62,7 @@ O objetivo principal do projeto é analisar e comparar o impacto da COVID-19 ent
 
 ### Atividades:
 - Definir ferramenta:
-  - Power BI / Tableau / Python (Streamlit)  
+  - Python (Streamlit)  
 - Criar visualizações:
   - Ranking de países  
   - Gráficos de linha (evolução)  
