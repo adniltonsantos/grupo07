@@ -3,6 +3,10 @@
 ## Tema do Projeto
 O projeto tem como tema a análise comparativa da COVID-19 entre países. Buscando destacar a posição do Brasil em relação ao cenário internacional, avaliando indicadores de impacto, recuperação e crescimento da pandemia. Link do banco https://www.kaggle.com/datasets/imdevskp/corona-virus-report?resource=download
 
+## 🚀 Deploy Online
+
+👉 https://covid-global-analysis-college-work-f9jk9eordwqjmenngx7ayn.streamlit.app/
+
 ## Integrantes
 - Adnilton Santos
 - Adriano Limeira
@@ -103,6 +107,24 @@ Se possível, poderíamos fazer dashboard para interação com usuário de manei
 -	Ordenar rankings por diferentes métricas  
 -	Destacar o Brasil automaticamente nas visualizações  
 -	Explorar comparações entre países  
+
+# 📷 Preview do Dashboard
+
+## 🌍 Mapa Global
+
+![Mapa Global](images/mapa-global.png)
+
+---
+
+## 📈 Ranking de Países
+
+![Ranking](images/ranking.png)
+
+---
+
+# 📚 Projeto Acadêmico
+
+Projeto desenvolvido para fins acadêmicos no curso de Análise e Desenvolvimento de Sistemas.
 
 
 
