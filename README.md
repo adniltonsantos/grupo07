@@ -108,6 +108,41 @@ Se possível, poderíamos fazer dashboard para interação com usuário de manei
 -	Destacar o Brasil automaticamente nas visualizações  
 -	Explorar comparações entre países  
 
+## Como Rodar Localmente
+
+### Pré-requisitos
+
+- Python 3.9 ou superior
+- pip
+
+### Instalação
+
+```bash
+git clone https://github.com/seu-usuario/grupo07.git
+cd grupo07
+pip install -r requirements.txt
+```
+
+### Executar o Dashboard
+
+```bash
+python -m streamlit run dashboard/app.py
+```
+
+Acesse em `http://localhost:8501`
+
+### Executar o Notebook de Análise
+
+Abra o Jupyter Notebook e execute o arquivo `notebooks/eda.ipynb`:
+
+```bash
+jupyter notebook notebooks/eda.ipynb
+```
+
+> Os dados processados já estão em `data/processed/`. O notebook também pode regenerá-los executando todas as células a partir do início.
+
+---
+
 # 📷 Preview do Dashboard
 
 ## 🌍 Mapa Global

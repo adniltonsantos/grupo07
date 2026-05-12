@@ -1,8 +1,39 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import pycountry
 from pathlib import Path
 import base64
+
+_ISO3_OVERRIDES = {
+    "US": "USA",
+    "South Korea": "KOR",
+    "North Korea": "PRK",
+    "Taiwan*": "TWN",
+    "Russia": "RUS",
+    "Iran": "IRN",
+    "Syria": "SYR",
+    "Tanzania": "TZA",
+    "Venezuela": "VEN",
+    "Moldova": "MDA",
+    "Vietnam": "VNM",
+    "Brunei": "BRN",
+    "Bolivia": "BOL",
+    "Laos": "LAO",
+    "Congo (Kinshasa)": "COD",
+    "Congo (Brazzaville)": "COG",
+    "West Bank and Gaza": "PSE",
+    "Burma": "MMR",
+    "Kosovo": "XKX",
+}
+
+def _to_iso3(name: str) -> str | None:
+    if name in _ISO3_OVERRIDES:
+        return _ISO3_OVERRIDES[name]
+    try:
+        return pycountry.countries.lookup(name).alpha_3
+    except LookupError:
+        return None
 
 def get_base64(file_path):
     with open(file_path, "rb") as f:
@@ -84,6 +115,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 arquivo = BASE_DIR / "data" / "processed" / "covid_tratado.csv"
 
 df = pd.read_csv(arquivo)
+df["iso_alpha"] = df["country_region"].apply(_to_iso3)
 
 # -------------------------
 # FILTRO
@@ -258,8 +290,8 @@ st.subheader(t["mapa"])
 
 fig_mapa = px.choropleth(
     df_filtrado,
-    locations="country_region",
-    locationmode="country names",
+    locations="iso_alpha",
+    locationmode="ISO-3",
     color="confirmed",
     hover_name="country_region",
     hover_data={
