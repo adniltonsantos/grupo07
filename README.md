@@ -83,30 +83,21 @@ O objetivo principal do projeto é analisar e comparar o impacto da COVID-19 ent
 👉 Opção recomendada: Power BI (mais rápido)
 👉 Diferencial: Python (Streamlit)
 
-## Ideia Inicial do Dashboard
-Queremos que o dashboard seja projetado para fornecer uma visão interativa e comparativa dos principais indicadores da COVID-19 em nível global, com destaque para o Brasil.  
-Ranquear países por:  
--	Casos confirmados  
--	Mortes  
--	Casos ativos  
--	Letalidade (Deaths / Confirmed)  
--	Recuperação (Recovered / Confirmed)  
-	  
-Comparação do Brasil com:  
--	Média mundial  
--	Top 10 países mais afetados 
--	Taxa de letalidade  
--	Taxa de recuperação  
-Comparação entre regiões:  
--	Média de casos  
--	Mortalidade  
--	Crescimento  
-Se possível, poderíamos fazer dashboard para interação com usuário de maneira que ele possa:   
--	Filtrar por país  
--	Selecionar regiões da OMS  
--	Ordenar rankings por diferentes métricas  
--	Destacar o Brasil automaticamente nas visualizações  
--	Explorar comparações entre países  
+## Dashboard
+
+O dashboard está organizado em três abas:
+
+| Aba | Conteúdo |
+|-----|----------|
+| **Visão Global** | KPIs totais (casos, mortes, recuperados, ativos) + mapa coroplético mundial |
+| **Ranking** | Top 10 países por métrica selecionada (casos, mortes, letalidade, etc.) |
+| **Brasil** | KPIs do Brasil em destaque + gráfico comparando participação do Brasil no total global |
+
+**Filtros disponíveis (sidebar):**
+- Idioma: Português, English, Español, Русский, 中文
+- Região da OMS: filtra todos os dados e gráficos simultaneamente
+
+A aba Brasil aparece automaticamente apenas quando a região selecionada inclui o Brasil (Todas ou Américas).
 
 ## Como Rodar Localmente
 
