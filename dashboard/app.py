@@ -5,6 +5,8 @@ import pycountry
 from pathlib import Path
 import base64
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 _ISO3_OVERRIDES = {
     "US": "USA",
     "South Korea": "KOR",
@@ -40,16 +42,19 @@ def get_base64(file_path):
         data = f.read()
     return base64.b64encode(data).decode()
 
+@st.cache_data
+def load_data() -> pd.DataFrame:
+    df = pd.read_csv(BASE_DIR / "data" / "processed" / "covid_tratado.csv")
+    df["iso_alpha"] = df["country_region"].apply(_to_iso3)
+    return df
+
 st.set_page_config(
     page_title="COVID Dashboard",
     page_icon="📊",
     layout="wide"
 )
 
-# CSS personalizado
-BASE_DIR = Path(__file__).resolve().parent.parent
 background_path = BASE_DIR / "images" / "background.jpg"
-
 background_image = get_base64(background_path)
 
 st.markdown(f"""
@@ -110,35 +115,25 @@ section[data-testid="stSidebar"] {{
 </style>
 """, unsafe_allow_html=True)
 
-# carregar base
-BASE_DIR = Path(__file__).resolve().parent.parent
-arquivo = BASE_DIR / "data" / "processed" / "covid_tratado.csv"
-
-df = pd.read_csv(arquivo)
-df["iso_alpha"] = df["country_region"].apply(_to_iso3)
-
-# -------------------------
-# FILTRO
-# -------------------------
-st.sidebar.title("Filtros")
+df = load_data()
 
 # -------------------------
 # IDIOMA
 # -------------------------
-
 idioma = st.sidebar.selectbox(
     "🌍 Idioma / Language",
     ["Português", "English", "Español", "Русский", "中文"]
 )
+
 # -------------------------
 # TRADUÇÕES
 # -------------------------
-
 translations = {
     "Português": {
         "titulo": "📊 Dashboard COVID-19",
         "subtitulo": "Análise Global da COVID-19",
         "filtros": "Filtros",
+        "todas": "Todas",
         "regiao": "Selecione a Região",
         "casos": "Casos Confirmados",
         "mortes": "Mortes",
@@ -150,14 +145,23 @@ translations = {
         "recuperados_br": "Recuperados",
         "letalidade": "Letalidade",
         "mapa": "🌍 Mapa Global de Casos",
+        "titulo_mapa": "Distribuição Global de Casos Confirmados",
         "ranking": "Escolha a métrica do ranking",
-        "top10": "Top 10 Países por"
+        "top10": "Top 10 Países por",
+        "metricas": {
+            "confirmed": "Casos Confirmados",
+            "deaths": "Mortes",
+            "recovered": "Recuperados",
+            "active": "Casos Ativos",
+            "letalidade": "Letalidade (%)",
+            "taxa_recuperacao": "Taxa de Recuperação (%)",
+        },
     },
-
     "English": {
         "titulo": "📊 COVID-19 Dashboard",
         "subtitulo": "Global COVID-19 Analysis",
         "filtros": "Filters",
+        "todas": "All",
         "regiao": "Select Region",
         "casos": "Confirmed Cases",
         "mortes": "Deaths",
@@ -169,14 +173,23 @@ translations = {
         "recuperados_br": "Recovered",
         "letalidade": "Fatality Rate",
         "mapa": "🌍 Global Cases Map",
+        "titulo_mapa": "Global Distribution of Confirmed Cases",
         "ranking": "Choose ranking metric",
-        "top10": "Top 10 Countries by"
+        "top10": "Top 10 Countries by",
+        "metricas": {
+            "confirmed": "Confirmed Cases",
+            "deaths": "Deaths",
+            "recovered": "Recovered",
+            "active": "Active Cases",
+            "letalidade": "Fatality Rate (%)",
+            "taxa_recuperacao": "Recovery Rate (%)",
+        },
     },
-
     "Español": {
         "titulo": "📊 Dashboard COVID-19",
         "subtitulo": "Análisis Global del COVID-19",
         "filtros": "Filtros",
+        "todas": "Todas",
         "regiao": "Seleccionar Región",
         "casos": "Casos Confirmados",
         "mortes": "Muertes",
@@ -188,14 +201,23 @@ translations = {
         "recuperados_br": "Recuperados",
         "letalidade": "Tasa de Mortalidad",
         "mapa": "🌍 Mapa Global de Casos",
+        "titulo_mapa": "Distribución Global de Casos Confirmados",
         "ranking": "Elegir métrica del ranking",
-        "top10": "Top 10 Países por"
+        "top10": "Top 10 Países por",
+        "metricas": {
+            "confirmed": "Casos Confirmados",
+            "deaths": "Muertes",
+            "recovered": "Recuperados",
+            "active": "Casos Activos",
+            "letalidade": "Tasa de Mortalidad (%)",
+            "taxa_recuperacao": "Tasa de Recuperación (%)",
+        },
     },
-
     "Русский": {
         "titulo": "📊 Панель COVID-19",
         "subtitulo": "Глобальный анализ COVID-19",
         "filtros": "Фильтры",
+        "todas": "Все",
         "regiao": "Выберите регион",
         "casos": "Подтвержденные случаи",
         "mortes": "Смерти",
@@ -207,14 +229,23 @@ translations = {
         "recuperados_br": "Выздоровевшие",
         "letalidade": "Летальность",
         "mapa": "🌍 Глобальная карта случаев",
+        "titulo_mapa": "Глобальное распределение подтверждённых случаев",
         "ranking": "Выберите метрику",
-        "top10": "Топ 10 стран по"
+        "top10": "Топ 10 стран по",
+        "metricas": {
+            "confirmed": "Подтвержденные случаи",
+            "deaths": "Смерти",
+            "recovered": "Выздоровевшие",
+            "active": "Активные случаи",
+            "letalidade": "Летальность (%)",
+            "taxa_recuperacao": "Уровень выздоровления (%)",
+        },
     },
-
     "中文": {
         "titulo": "📊 COVID-19 仪表板",
         "subtitulo": "全球 COVID-19 分析",
         "filtros": "筛选",
+        "todas": "全部",
         "regiao": "选择地区",
         "casos": "确诊病例",
         "mortes": "死亡人数",
@@ -226,24 +257,33 @@ translations = {
         "recuperados_br": "康复人数",
         "letalidade": "死亡率",
         "mapa": "🌍 全球病例地图",
+        "titulo_mapa": "全球确诊病例分布",
         "ranking": "选择排名指标",
-        "top10": "前10国家"
-    }
+        "top10": "前10国家",
+        "metricas": {
+            "confirmed": "确诊病例",
+            "deaths": "死亡人数",
+            "recovered": "康复人数",
+            "active": "现存病例",
+            "letalidade": "死亡率 (%)",
+            "taxa_recuperacao": "康复率 (%)",
+        },
+    },
 }
 
 t = translations[idioma]
 
+st.sidebar.title(t["filtros"])
+
 st.title(t["titulo"])
 st.write(t["subtitulo"])
 
-regioes = ["Todas"] + sorted(df["who_region"].unique().tolist())
+todas_label = t["todas"]
+regioes = [todas_label] + sorted(df["who_region"].unique().tolist())
 
-regiao_escolhida = st.sidebar.selectbox(
-    t["regiao"],
-    regioes
-)
+regiao_escolhida = st.sidebar.selectbox(t["regiao"], regioes)
 
-if regiao_escolhida != "Todas":
+if regiao_escolhida != todas_label:
     df_filtrado = df[df["who_region"] == regiao_escolhida]
 else:
     df_filtrado = df.copy()
@@ -266,7 +306,7 @@ col4.metric(t["ativos"], f"{total_ativos:,.0f}")
 # -------------------------
 # BRASIL
 # -------------------------
-if regiao_escolhida in ["Todas", "Americas"]:
+if regiao_escolhida in [todas_label, "Americas"]:
     st.subheader(t["brasil"])
 
     brasil = df[df["country_region"] == "Brazil"]
@@ -298,9 +338,16 @@ fig_mapa = px.choropleth(
         "confirmed": True,
         "deaths": True,
         "recovered": True,
-        "active": True
+        "active": True,
+        "iso_alpha": False,
     },
-    title="Distribuição Global de Casos Confirmados",
+    labels={
+        "confirmed": t["casos"],
+        "deaths": t["mortes"],
+        "recovered": t["recuperados"],
+        "active": t["ativos"],
+    },
+    title=t["titulo_mapa"],
     color_continuous_scale="Reds"
 )
 
@@ -309,26 +356,16 @@ fig_mapa.update_layout(
     plot_bgcolor="#f7f9fc"
 )
 
-st.plotly_chart(fig_mapa, width="stretch")
+st.plotly_chart(fig_mapa, use_container_width=True)
 
 # -------------------------
 # RANKING
 # -------------------------
-metricas = {
-    "Casos Confirmados": "confirmed",
-    "Mortes": "deaths",
-    "Recuperados": "recovered",
-    "Casos Ativos": "active",
-    "Letalidade (%)": "letalidade",
-    "Taxa de Recuperação (%)": "taxa_recuperacao"
-}
+metricas = t["metricas"]
 
-metrica_label = st.selectbox(
-    t["ranking"],
-    list(metricas.keys())
-)
+metrica_label = st.selectbox(t["ranking"], list(metricas.values()))
 
-metrica = metricas[metrica_label]
+metrica = next(k for k, v in metricas.items() if v == metrica_label)
 
 top10 = df_filtrado.nlargest(10, metrica)
 
@@ -337,7 +374,8 @@ fig = px.bar(
     x=metrica,
     y="country_region",
     orientation="h",
-    title=f"Top 10 Países por {metrica_label}"
+    title=f"{t['top10']} {metrica_label}",
+    labels={metrica: metrica_label, "country_region": ""},
 )
 
 fig.update_layout(
@@ -346,4 +384,4 @@ fig.update_layout(
     plot_bgcolor="#ffffff"
 )
 
-st.plotly_chart(fig, width="stretch")
+st.plotly_chart(fig, use_container_width=True)
